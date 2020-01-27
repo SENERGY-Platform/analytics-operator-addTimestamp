@@ -23,7 +23,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.infai.ses.senergy.operators</groupId>
-    <artifactId>operator-nothing</artifactId>
+    <artifactId>operator-addTimestamp</artifactId>
     <version>0.1</version>
 
     <properties>

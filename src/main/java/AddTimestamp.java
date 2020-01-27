@@ -20,13 +20,13 @@ import org.infai.seits.sepl.operators.Config;
 import org.infai.seits.sepl.operators.Message;
 import org.infai.seits.sepl.operators.OperatorInterface;
 
-public class Nothing implements OperatorInterface {
+public class AddTimestamp implements OperatorInterface {
 
     Config config = new Config();
 
-    public Nothing(){}
+    public AddTimestamp(){}
 
-    public Nothing(Config config){
+    public AddTimestamp(Config config){
         this.config = config;
     }
 

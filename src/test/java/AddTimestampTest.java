@@ -24,16 +24,16 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class NothingTest {
+public class AddTimestampTest {
 
     @Test
     public void testFloatValues() throws Exception {
-        Nothing nothing = new Nothing();
+        AddTimestamp addTimestamp = new AddTimestamp();
         List<Message> messages = TestMessageProvider.getTestMesssagesSet( "src/test/resources/sample-data-small.json");
         for (int i = 0; i < messages.size(); i++) {
             Message m = messages.get(i);
-            nothing.config(m);
-            nothing.run(m);
+            addTimestamp.config(m);
+            addTimestamp.run(m);
             double valueActual = m.getInput("value").getValue();
             double valueExpected = Double.parseDouble(m.getMessageString().split("value\":")[1].split("}")[0]);
             Assert.assertEquals(valueExpected, valueActual, 0.01);
@@ -43,12 +43,12 @@ public class NothingTest {
     @Test
     public void testStringValues() throws Exception {
         JSONObject config =TestMessageProvider.getConfig();
-        Nothing nothing = new Nothing(new Config(config.toString()));
+        AddTimestamp addTimestamp = new AddTimestamp(new Config(config.toString()));
         List<Message> messages = TestMessageProvider.getTestMesssagesSet( "src/test/resources/sample-data-small-2.json");
         for (int i = 0; i < messages.size(); i++) {
             Message m = messages.get(i);
-            nothing.config(m);
-            nothing.run(m);
+            addTimestamp.config(m);
+            addTimestamp.run(m);
 
             String valueActual = m.getInput("value").getString();
             String valueExpected = m.getMessageString().split("value\":\"")[1].split("\"}")[0];

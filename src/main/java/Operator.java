@@ -22,6 +22,6 @@ public class Operator {
 
     public static void main(String[] args) {
         Stream stream  = new Stream();
-        stream.start(new Nothing());
+        stream.start(new AddTimestamp());
     }
 }
