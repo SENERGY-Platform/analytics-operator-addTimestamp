@@ -18,6 +18,7 @@
 
 import org.infai.seits.sepl.operators.Config;
 import org.infai.seits.sepl.operators.Message;
+import org.joda.time.DateTimeUtils;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,6 +29,7 @@ public class AddTimestampTest {
 
     @Test
     public void testFloatValues() throws Exception {
+        DateTimeUtils.setCurrentMillisFixed(0);
         AddTimestamp addTimestamp = new AddTimestamp();
         List<Message> messages = TestMessageProvider.getTestMesssagesSet( "src/test/resources/sample-data-small.json");
         for (int i = 0; i < messages.size(); i++) {
@@ -35,13 +37,17 @@ public class AddTimestampTest {
             addTimestamp.config(m);
             addTimestamp.run(m);
             double valueActual = m.getInput("value").getValue();
-            double valueExpected = Double.parseDouble(m.getMessageString().split("value\":")[1].split("}")[0]);
+            double valueExpected = Double.parseDouble(m.getMessageString().split("value\":")[1].split(",")[0]);
             Assert.assertEquals(valueExpected, valueActual, 0.01);
+
+            String timestampActual = m.getMessageString().split("timestamp\":\"")[1].split("\"")[0];
+            Assert.assertTrue(timestampActual.equals("1970-01-01T01:00+01:00"));
         }
     }
 
     @Test
     public void testStringValues() throws Exception {
+        DateTimeUtils.setCurrentMillisFixed(0);
         JSONObject config =TestMessageProvider.getConfig();
         AddTimestamp addTimestamp = new AddTimestamp(new Config(config.toString()));
         List<Message> messages = TestMessageProvider.getTestMesssagesSet( "src/test/resources/sample-data-small-2.json");
@@ -51,8 +57,11 @@ public class AddTimestampTest {
             addTimestamp.run(m);
 
             String valueActual = m.getInput("value").getString();
-            String valueExpected = m.getMessageString().split("value\":\"")[1].split("\"}")[0];
+            String valueExpected = m.getMessageString().split("value\":\"")[1].split("\",")[0];
             Assert.assertEquals(valueExpected, valueActual);
+
+            String timestampActual = m.getMessageString().split("timestamp\":\"")[1].split("\"")[0];
+            Assert.assertTrue(timestampActual.equals("1970-01-01T01:00+01:00"));
         }
     }
 }

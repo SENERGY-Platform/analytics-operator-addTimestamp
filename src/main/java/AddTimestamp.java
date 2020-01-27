@@ -19,27 +19,41 @@
 import org.infai.seits.sepl.operators.Config;
 import org.infai.seits.sepl.operators.Message;
 import org.infai.seits.sepl.operators.OperatorInterface;
+import org.joda.time.DateTimeUtils;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class AddTimestamp implements OperatorInterface {
 
-    Config config = new Config();
+    protected String inputTypeConfig;
+    protected ZoneId timezone;
 
-    public AddTimestamp(){}
+    public AddTimestamp(){
+        this(new Config());
+    }
 
     public AddTimestamp(Config config){
-        this.config = config;
+        inputTypeConfig = config.getConfigValue("inputType", "float");
+        timezone = ZoneId.of(config.getConfigValue("timezone", "Europe/Berlin"));
     }
 
     @Override
     public void run(Message message) {
-        String configValue = config.getConfigValue("inputType", "float");
         Object value;
-        if(configValue.equals("string")){
+        if(inputTypeConfig.equals("string")){
             value = message.getInput("value").getString();
         } else {
             value = message.getInput("value").getValue();
         }
         message.output("value", value);
+
+        long currentMillis = DateTimeUtils.currentTimeMillis(); //Needs to use this method for testing
+        Instant instant = Instant.ofEpochMilli(currentMillis);
+        ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, timezone);
+
+        message.output("timestamp", zdt.toOffsetDateTime().toString());
     }
 
     @Override
