@@ -47,7 +47,7 @@ public class AddTimestamp implements OperatorInterface {
         } else {
             value = message.getInput("value").getValue();
         }
-        message.output("value", value);
+        message.output("output_value", value);
 
         long currentMillis = DateTimeUtils.currentTimeMillis(); //Needs to use this method for testing
         Instant instant = Instant.ofEpochMilli(currentMillis);

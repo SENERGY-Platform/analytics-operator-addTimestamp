@@ -8,7 +8,7 @@ Takes an input and puts it into an output field. Adds another output field 'time
 
 ## Outputs
 
-* value (float|string): Unchanged input. Configure type with 'inputType'
+* output_value (float|string): Unchanged input. Configure type with 'inputType'
 * timestamp (string): Current datetime in ISO 8601. Configure timezone with 'timezone'
 
 ## Configs
