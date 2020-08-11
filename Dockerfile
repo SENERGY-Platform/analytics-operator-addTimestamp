@@ -1,2 +1,8 @@
-FROM maven:3.5-jdk-8-onbuild-alpine
-CMD ["java","-jar","/usr/src/app/target/operator-addTimestamp-jar-with-dependencies.jar"]
+FROM maven:3.6-openjdk-11-slim as builder
+ADD . /usr/src/app
+WORKDIR /usr/src/app
+RUN mvn clean install
+
+FROM openjdk:11-jre-slim
+COPY --from=builder /usr/src/app/target/operator-addTimestamp-jar-with-dependencies.jar /opt/operator-addTimestamp-jar-with-dependencies.jar
+CMD ["java","-jar","/opt/operator-addTimestamp-jar-with-dependencies.jar"]
