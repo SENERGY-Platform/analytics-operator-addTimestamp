@@ -17,6 +17,7 @@
  */
 
 import org.infai.ses.senergy.operators.Config;
+import org.infai.ses.senergy.operators.Helper;
 import org.infai.ses.senergy.operators.Message;
 import org.infai.ses.senergy.operators.OperatorInterface;
 import org.joda.time.DateTimeUtils;
@@ -29,6 +30,7 @@ public class AddTimestamp implements OperatorInterface {
 
     protected String inputTypeConfig;
     protected ZoneId timezone;
+    protected boolean debug;
 
     public AddTimestamp(){
         this(new Config());
@@ -37,6 +39,7 @@ public class AddTimestamp implements OperatorInterface {
     public AddTimestamp(Config config){
         inputTypeConfig = config.getConfigValue("inputType", "float");
         timezone = ZoneId.of(config.getConfigValue("timezone", "Europe/Berlin"));
+        debug = Boolean.parseBoolean(Helper.getEnv("DEBUG", "false"));
     }
 
     @Override
@@ -53,7 +56,12 @@ public class AddTimestamp implements OperatorInterface {
         Instant instant = Instant.ofEpochMilli(currentMillis);
         ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, timezone);
 
-        message.output("timestamp", zdt.toOffsetDateTime().toString());
+        String timestamp = zdt.toOffsetDateTime().toString();
+        message.output("timestamp", timestamp);
+        if (debug) {
+            System.out.println("Read value: " + value.toString());
+            System.out.println("Output timestamp: " + timestamp);
+        }
     }
 
     @Override
