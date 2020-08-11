@@ -16,8 +16,11 @@
  *
  */
 
-import org.infai.seits.sepl.operators.Builder;
-import org.infai.seits.sepl.operators.Message;
+
+import org.infai.ses.senergy.operators.Builder;
+import org.infai.ses.senergy.operators.Config;
+import org.infai.ses.senergy.operators.Message;
+import org.infai.ses.senergy.utils.ConfigProvider;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -33,7 +36,8 @@ public class TestMessageProvider {
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         Builder builder = new Builder("1", "1");
         List<Message> messageSet = new ArrayList<>();
-        JSONObject config = getConfig();
+        Config config = new Config(getConfig().toString());
+        ConfigProvider.setConfig(config);
         String line;
         Message m;
         JSONObject jsonObjectRead, jsonObject;
@@ -41,7 +45,6 @@ public class TestMessageProvider {
             jsonObjectRead = new JSONObject(line);
             jsonObject = new JSONObject().put("device_id", "1").put("value", new JSONObject().put("reading", jsonObjectRead));
             m = new Message(builder.formatMessage(jsonObject.toString()));
-            m.setConfig(config.toString());
             messageSet.add(m);
         }
         return messageSet;

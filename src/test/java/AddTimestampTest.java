@@ -16,8 +16,8 @@
  *
  */
 
-import org.infai.seits.sepl.operators.Config;
-import org.infai.seits.sepl.operators.Message;
+import org.infai.ses.senergy.operators.Config;
+import org.infai.ses.senergy.operators.Message;
 import org.joda.time.DateTimeUtils;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -34,7 +34,7 @@ public class AddTimestampTest {
         List<Message> messages = TestMessageProvider.getTestMesssagesSet( "src/test/resources/sample-data-small.json");
         for (int i = 0; i < messages.size(); i++) {
             Message m = messages.get(i);
-            addTimestamp.config(m);
+            addTimestamp.configMessage(m);
             addTimestamp.run(m);
             double valueActual = m.getInput("value").getValue();
             double valueExpected = Double.parseDouble(m.getMessageString().split("value\":")[1].split(",")[0]);
@@ -53,7 +53,7 @@ public class AddTimestampTest {
         List<Message> messages = TestMessageProvider.getTestMesssagesSet( "src/test/resources/sample-data-small-2.json");
         for (int i = 0; i < messages.size(); i++) {
             Message m = messages.get(i);
-            addTimestamp.config(m);
+            addTimestamp.configMessage(m);
             addTimestamp.run(m);
 
             String valueActual = m.getInput("value").getString();

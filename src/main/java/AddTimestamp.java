@@ -16,9 +16,9 @@
  *
  */
 
-import org.infai.seits.sepl.operators.Config;
-import org.infai.seits.sepl.operators.Message;
-import org.infai.seits.sepl.operators.OperatorInterface;
+import org.infai.ses.senergy.operators.Config;
+import org.infai.ses.senergy.operators.Message;
+import org.infai.ses.senergy.operators.OperatorInterface;
 import org.joda.time.DateTimeUtils;
 
 import java.time.Instant;
@@ -57,7 +57,7 @@ public class AddTimestamp implements OperatorInterface {
     }
 
     @Override
-    public void config(Message message) {
+    public void configMessage(Message message) {
         message.addInput("value");
     }
 }
