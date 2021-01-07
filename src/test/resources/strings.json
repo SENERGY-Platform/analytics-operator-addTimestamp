@@ -1,0 +1,18 @@
+[
+  {
+    "device_id": "1",
+    "value": {
+      "reading": {
+        "value": "Test"
+      }
+    }
+  },
+  {
+    "device_id": "1",
+    "value": {
+      "reading": {
+        "value": "Test2"
+      }
+    }
+  }
+]

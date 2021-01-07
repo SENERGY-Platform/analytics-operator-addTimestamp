@@ -16,17 +16,15 @@
  *
  */
 
-import org.infai.ses.senergy.operators.Config;
-import org.infai.ses.senergy.operators.Helper;
-import org.infai.ses.senergy.operators.Message;
-import org.infai.ses.senergy.operators.OperatorInterface;
+import org.infai.ses.senergy.exceptions.NoValueException;
+import org.infai.ses.senergy.operators.*;
 import org.joda.time.DateTimeUtils;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-public class AddTimestamp implements OperatorInterface {
+public class AddTimestamp extends BaseOperator {
 
     protected String inputTypeConfig;
     protected ZoneId timezone;
@@ -48,7 +46,12 @@ public class AddTimestamp implements OperatorInterface {
         if(inputTypeConfig.equals("string")){
             value = message.getInput("value").getString();
         } else {
-            value = message.getInput("value").getValue();
+            try {
+                value = message.getInput("value").getValue();
+            } catch (NoValueException e) {
+                e.printStackTrace();
+                return;
+            }
         }
         message.output("output_value", value);
 
@@ -65,7 +68,8 @@ public class AddTimestamp implements OperatorInterface {
     }
 
     @Override
-    public void configMessage(Message message) {
+    public Message configMessage(Message message) {
         message.addInput("value");
+        return message;
     }
 }

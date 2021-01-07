@@ -16,52 +16,65 @@
  *
  */
 
+import org.infai.ses.senergy.models.DeviceMessageModel;
+import org.infai.ses.senergy.models.MessageModel;
 import org.infai.ses.senergy.operators.Config;
+import org.infai.ses.senergy.operators.Helper;
 import org.infai.ses.senergy.operators.Message;
+import org.infai.ses.senergy.operators.OperatorInterface;
+import org.infai.ses.senergy.testing.utils.JSONHelper;
+import org.infai.ses.senergy.utils.ConfigProvider;
 import org.joda.time.DateTimeUtils;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.List;
 
 public class AddTimestampTest {
 
     @Test
     public void testFloatValues() throws Exception {
         DateTimeUtils.setCurrentMillisFixed(0);
-        AddTimestamp addTimestamp = new AddTimestamp();
-        List<Message> messages = TestMessageProvider.getTestMesssagesSet( "src/test/resources/sample-data-small.json");
-        for (int i = 0; i < messages.size(); i++) {
-            Message m = messages.get(i);
-            addTimestamp.configMessage(m);
-            addTimestamp.run(m);
-            double valueActual = m.getInput("value").getValue();
-            double valueExpected = Double.parseDouble(m.getMessageString().split("value\":")[1].split(",")[0]);
-            Assert.assertEquals(valueExpected, valueActual, 0.01);
-
-            String timestampActual = m.getMessageString().split("timestamp\":\"")[1].split("\"")[0];
-            Assert.assertTrue(timestampActual.equals("1970-01-01T01:00+01:00"));
+        Config config = new Config(new JSONHelper().parseFile("config-numbers.json").toString());
+        JSONArray messages = new JSONHelper().parseFile("numbers.json");
+        String topicName = config.getInputTopicsConfigs().get(0).getName();
+        ConfigProvider.setConfig(config);
+        Message message = new Message();
+        MessageModel model = new MessageModel();
+        OperatorInterface testOperator = new AddTimestamp();
+        message.addInput("expectValue");
+        message.addInput("expectTS");
+        testOperator.configMessage(message);
+        for (Object msg : messages) {
+            DeviceMessageModel deviceMessageModel = JSONHelper.getObjectFromJSONString(msg.toString(), DeviceMessageModel.class);
+            assert deviceMessageModel != null;
+            model.putMessage(topicName, Helper.deviceToInputMessageModel(deviceMessageModel, topicName));
+            message.setMessage(model);
+            testOperator.run(message);
+            Assert.assertEquals(message.getInput("value").getValue(), message.getMessage().getOutputMessage().getAnalytics().get("output_value"));
+            Assert.assertEquals("1970-01-01T01:00+01:00", message.getMessage().getOutputMessage().getAnalytics().get("timestamp"));
         }
     }
 
     @Test
-    public void testStringValues() throws Exception {
+    public void testStringValues() {
         DateTimeUtils.setCurrentMillisFixed(0);
-        JSONObject config =TestMessageProvider.getConfig();
-        AddTimestamp addTimestamp = new AddTimestamp(new Config(config.toString()));
-        List<Message> messages = TestMessageProvider.getTestMesssagesSet( "src/test/resources/sample-data-small-2.json");
-        for (int i = 0; i < messages.size(); i++) {
-            Message m = messages.get(i);
-            addTimestamp.configMessage(m);
-            addTimestamp.run(m);
+        Config config = new Config(new JSONHelper().parseFile("config-strings.json").toString());
+        JSONArray messages = new JSONHelper().parseFile("strings.json");
+        String topicName = config.getInputTopicsConfigs().get(0).getName();
+        ConfigProvider.setConfig(config);
+        Message message = new Message();
+        MessageModel model = new MessageModel();
+        OperatorInterface testOperator = new AddTimestamp(config);
+        testOperator.configMessage(message);
+        for (Object msg : messages) {
+            DeviceMessageModel deviceMessageModel = JSONHelper.getObjectFromJSONString(msg.toString(), DeviceMessageModel.class);
+            assert deviceMessageModel != null;
+            model.putMessage(topicName, Helper.deviceToInputMessageModel(deviceMessageModel, topicName));
+            message.setMessage(model);
+            testOperator.run(message);
 
-            String valueActual = m.getInput("value").getString();
-            String valueExpected = m.getMessageString().split("value\":\"")[1].split("\",")[0];
-            Assert.assertEquals(valueExpected, valueActual);
-
-            String timestampActual = m.getMessageString().split("timestamp\":\"")[1].split("\"")[0];
-            Assert.assertTrue(timestampActual.equals("1970-01-01T01:00+01:00"));
+            Assert.assertEquals(message.getInput("value").getString(), message.getMessage().getOutputMessage().getAnalytics().get("output_value"));
+            Assert.assertEquals("1970-01-01T01:00+01:00", message.getMessage().getOutputMessage().getAnalytics().get("timestamp"));
         }
     }
 }

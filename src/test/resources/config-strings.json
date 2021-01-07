@@ -1,0 +1,19 @@
+{
+  "config": {
+    "inputType": "string",
+    "timezone": ""
+  },
+  "inputTopics": [
+    {
+      "name": "test-topic",
+      "filterType": "DeviceId",
+      "filterValue": "1",
+      "mappings": [
+        {
+          "dest": "value",
+          "source": "value.reading.value"
+        }
+      ]
+    }
+  ]
+}
