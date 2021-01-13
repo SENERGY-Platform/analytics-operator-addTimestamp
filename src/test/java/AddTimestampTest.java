@@ -41,8 +41,6 @@ public class AddTimestampTest {
         Message message = new Message();
         MessageModel model = new MessageModel();
         OperatorInterface testOperator = new AddTimestamp();
-        message.addInput("expectValue");
-        message.addInput("expectTS");
         testOperator.configMessage(message);
         for (Object msg : messages) {
             DeviceMessageModel deviceMessageModel = JSONHelper.getObjectFromJSONString(msg.toString(), DeviceMessageModel.class);
