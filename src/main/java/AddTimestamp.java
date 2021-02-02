@@ -44,10 +44,15 @@ public class AddTimestamp extends BaseOperator {
     public void run(Message message) {
         Object value;
         if(inputTypeConfig.equals("string")){
-            value = message.getInput("value").getString();
+            try {
+                value = message.getFlexInput("value").getString();
+            } catch (NoValueException e) {
+                e.printStackTrace();
+                return;
+            }
         } else {
             try {
-                value = message.getInput("value").getValue();
+                value = message.getFlexInput("value").getValue();
             } catch (NoValueException e) {
                 e.printStackTrace();
                 return;
@@ -69,7 +74,7 @@ public class AddTimestamp extends BaseOperator {
 
     @Override
     public Message configMessage(Message message) {
-        message.addInput("value");
+        message.addFlexInput("value");
         return message;
     }
 }

@@ -16,6 +16,7 @@
  *
  */
 
+import org.infai.ses.senergy.exceptions.NoValueException;
 import org.infai.ses.senergy.models.DeviceMessageModel;
 import org.infai.ses.senergy.models.MessageModel;
 import org.infai.ses.senergy.operators.Config;
@@ -48,13 +49,13 @@ public class AddTimestampTest {
             model.putMessage(topicName, Helper.deviceToInputMessageModel(deviceMessageModel, topicName));
             message.setMessage(model);
             testOperator.run(message);
-            Assert.assertEquals(message.getInput("value").getValue(), message.getMessage().getOutputMessage().getAnalytics().get("output_value"));
+            Assert.assertEquals(message.getFlexInput("value").getValue(), message.getMessage().getOutputMessage().getAnalytics().get("output_value"));
             Assert.assertEquals("1970-01-01T01:00+01:00", message.getMessage().getOutputMessage().getAnalytics().get("timestamp"));
         }
     }
 
     @Test
-    public void testStringValues() {
+    public void testStringValues() throws NoValueException {
         DateTimeUtils.setCurrentMillisFixed(0);
         Config config = new Config(new JSONHelper().parseFile("config-strings.json").toString());
         JSONArray messages = new JSONHelper().parseFile("strings.json");
@@ -71,7 +72,7 @@ public class AddTimestampTest {
             message.setMessage(model);
             testOperator.run(message);
 
-            Assert.assertEquals(message.getInput("value").getString(), message.getMessage().getOutputMessage().getAnalytics().get("output_value"));
+            Assert.assertEquals(message.getFlexInput("value").getString(), message.getMessage().getOutputMessage().getAnalytics().get("output_value"));
             Assert.assertEquals("1970-01-01T01:00+01:00", message.getMessage().getOutputMessage().getAnalytics().get("timestamp"));
         }
     }
