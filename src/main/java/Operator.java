@@ -26,7 +26,7 @@ public class Operator {
     private static final Logger log = LoggerFactory.getLogger(Operator.class);
 
     public static void main(String[] args) {
-        log.info("Starting operator",
+        log.info("Starting addTimestamp operator",
                 StructuredArguments.keyValue("operator", "addTimestamp")
         );
         Stream stream  = new Stream();
