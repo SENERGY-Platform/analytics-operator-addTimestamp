@@ -1,0 +1,36 @@
+{
+  "inputs": [
+    {
+      "name": "value",
+      "type": "float"
+    },
+    {
+      "name": "original_input_ids",
+      "type": "string"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output_value",
+      "type": "float"
+    },
+    {
+      "name": "timestamp",
+      "type": "string"
+    },
+    {
+      "name": "original_input_ids",
+      "type": "string"
+    }
+  ],
+  "config_values": [
+    {
+      "name": "inputType",
+      "type": "string"
+    },
+    {
+      "name": "timezone",
+      "type": "string"
+    }
+  ]
+}
