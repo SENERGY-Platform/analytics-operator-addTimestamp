@@ -18,6 +18,10 @@
 
 import org.infai.ses.senergy.exceptions.NoValueException;
 import org.infai.ses.senergy.operators.*;
+import org.infai.ses.senergy.operators.declaration.ConfigValue;
+import org.infai.ses.senergy.operators.declaration.Input;
+import org.infai.ses.senergy.operators.declaration.Output;
+import org.infai.ses.senergy.operators.declaration.Type;
 import org.joda.time.DateTimeUtils;
 
 import java.time.Instant;
@@ -25,6 +29,21 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 public class AddTimestamp extends BaseOperator {
+
+    @Input(type = Type.FLOAT) // a string when inputType is 'string'
+    static final String VALUE = "value";
+
+    @Output(type = Type.FLOAT) // a string when inputType is 'string'
+    static final String OUTPUT_VALUE = "output_value";
+
+    @Output(type = Type.STRING)
+    static final String TIMESTAMP = "timestamp";
+
+    @ConfigValue(type = Type.STRING, defaultValue = "float")
+    static final String INPUT_TYPE = "inputType";
+
+    @ConfigValue(type = Type.STRING, defaultValue = "Europe/Berlin")
+    static final String TIMEZONE = "timezone";
 
     protected String inputTypeConfig;
     protected ZoneId timezone;
@@ -35,8 +54,8 @@ public class AddTimestamp extends BaseOperator {
     }
 
     public AddTimestamp(Config config){
-        inputTypeConfig = config.getConfigValue("inputType", "float");
-        timezone = ZoneId.of(config.getConfigValue("timezone", "Europe/Berlin"));
+        inputTypeConfig = config.getConfigValue(INPUT_TYPE, "float");
+        timezone = ZoneId.of(config.getConfigValue(TIMEZONE, "Europe/Berlin"));
         debug = Boolean.parseBoolean(Helper.getEnv("DEBUG", "false"));
     }
 
@@ -45,27 +64,27 @@ public class AddTimestamp extends BaseOperator {
         Object value;
         if(inputTypeConfig.equals("string")){
             try {
-                value = message.getFlexInput("value").getString();
+                value = message.getFlexInput(VALUE).getString();
             } catch (NoValueException e) {
                 e.printStackTrace();
                 return;
             }
         } else {
             try {
-                value = message.getFlexInput("value").getValue();
+                value = message.getFlexInput(VALUE).getValue();
             } catch (NoValueException e) {
                 e.printStackTrace();
                 return;
             }
         }
-        message.output("output_value", value);
+        message.output(OUTPUT_VALUE, value);
 
         long currentMillis = DateTimeUtils.currentTimeMillis(); //Needs to use this method for testing
         Instant instant = Instant.ofEpochMilli(currentMillis);
         ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, timezone);
 
         String timestamp = zdt.toOffsetDateTime().toString();
-        message.output("timestamp", timestamp);
+        message.output(TIMESTAMP, timestamp);
         if (debug) {
             System.out.println("Read value: " + value.toString());
             System.out.println("Output timestamp: " + timestamp);
@@ -74,7 +93,7 @@ public class AddTimestamp extends BaseOperator {
 
     @Override
     public Message configMessage(Message message) {
-        message.addFlexInput("value");
+        message.addFlexInput(VALUE);
         return message;
     }
 }
